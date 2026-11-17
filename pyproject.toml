@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opensandbox-deepagents"
+description = "OpenSandbox sandbox backend and provider for Deep Agents and Deep Agents Code"
+license = { text = "MIT" }
+readme = "README.md"
+
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+version = "0.1.0"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "deepagents>=0.7.38,<0.8.0",
+    "opensandbox>=1.2,<2",
+]
+
+[project.optional-dependencies]
+dcode = [
+    "deepagents-code>=0.2.9",
+]
+
+[project.entry-points."deepagents_code.sandbox_providers"]
+opensandbox = "opensandbox_deepagents.provider:OpenSandboxProvider"
+
+[tool.hatch.build.targets.wheel]
+packages = ["opensandbox_deepagents"]
+
+[project.urls]
+Homepage = "https://github.com/yjjnls/opensandbox-deepagents"
+Repository = "https://github.com/yjjnls/opensandbox-deepagents"
+Issues = "https://github.com/yjjnls/opensandbox-deepagents/issues"
+
+[dependency-groups]
+test = [
+    "pytest>=8.0,<10.0",
+    "pytest-asyncio",
+    "ruff>=0.15,<0.16",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "D", "UP", "B", "SIM"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]

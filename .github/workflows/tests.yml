@@ -1,0 +1,34 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: |
+          uv venv
+          uv pip install -e . pytest pytest-asyncio
+          # The dcode provider layer and entry-point tests need deepagents-code,
+          # which requires Python >= 3.14.
+          if [ "${{ matrix.python-version }}" = "3.14" ]; then
+            uv pip install "deepagents-code>=0.2.9"
+          fi
+      - name: Run tests
+        run: uv run pytest -q
+      - name: Lint
+        run: |
+          uv pip install "ruff>=0.15,<0.16"
+          uv run ruff check opensandbox_deepagents tests
